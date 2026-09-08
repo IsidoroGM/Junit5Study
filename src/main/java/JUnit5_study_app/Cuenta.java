@@ -31,6 +31,31 @@ public class Cuenta {
         this.saldo = saldo;
     }
 
+    public void debito(BigDecimal monto){
+        this.saldo=this.saldo.subtract(monto);
+
+    }
+
+    public void credito(BigDecimal monto){
+        this.saldo=this.saldo.add(monto);
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        
+        if(!(obj instanceof Cuenta)){
+            return false;
+        }
+
+        Cuenta c= (Cuenta) obj;
+        if(this.persona == null || this.saldo == null){
+            return false;
+        }
+
+        return this.persona.equals(c.getPersona()) && this.saldo.equals(c.getSaldo());
+    }
+
     
     
 
