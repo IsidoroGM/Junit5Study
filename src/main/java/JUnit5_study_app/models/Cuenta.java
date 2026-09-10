@@ -1,9 +1,12 @@
-package JUnit5_study_app;
+package JUnit5_study_app.models;
 
 import java.math.BigDecimal;
 
+import JUnit5_study_app.exeptions.dineroInsuficienteExceptions;
+
 public class Cuenta {
 
+    private Banco banco;
     private String persona;
     private BigDecimal saldo;
 
@@ -14,6 +17,15 @@ public class Cuenta {
         this.persona = persona;
         this.saldo = saldo;
     }
+
+    public Banco getBanco() {
+        return banco;
+    }
+
+    public void setBanco(Banco banco) {
+        this.banco = banco;
+    }
+
 
     public String getPersona() {
         return persona;
@@ -32,7 +44,15 @@ public class Cuenta {
     }
 
     public void debito(BigDecimal monto){
-        this.saldo=this.saldo.subtract(monto);
+        BigDecimal nuevoSaldo=this.saldo.subtract(monto);
+
+        //Implementamos el manejo de excepciones
+        if (nuevoSaldo.compareTo(BigDecimal.ZERO) < 0){
+            throw new dineroInsuficienteExceptions("Dinero insuficiente");
+        }
+
+        //Si no ocurre la excepción, el saldo será el actualizado tras el metodo subtract
+        this.saldo=nuevoSaldo;
 
     }
 
