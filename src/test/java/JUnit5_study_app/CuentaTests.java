@@ -1,8 +1,18 @@
 package JUnit5_study_app;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.JRE;
+import org.junit.jupiter.api.condition.OS;
 
 import JUnit5_study_app.exeptions.dineroInsuficienteExceptions;
 import JUnit5_study_app.models.Banco;
@@ -11,8 +21,26 @@ import JUnit5_study_app.models.Cuenta;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Properties;
 
 public class CuentaTests {
+
+    Cuenta cuenta;
+
+
+    //Before Each y AfterEach se van a ejecutar por cada instancia
+    @BeforeEach 
+    void initMetodoTest(){
+        this.cuenta =new Cuenta("Andres", new BigDecimal("1000.5655"));
+    }
+
+    @AfterEach 
+    void tearDown(){
+        System.out.println("finalizando el metodo de prueba");
+    }
+
+
 
     @Test
     @DisplayName ("Probando nombre de la cuenta")
@@ -20,7 +48,7 @@ public class CuentaTests {
 
         // Con este test, vamos a probar setPersona y el constructor a la vez.
 
-        Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.5655"));
+        //Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.5655"));
         cuenta.setPersona("Andres");
         String esperado = "Andres";
         String real = cuenta.getPersona();
@@ -38,7 +66,7 @@ public class CuentaTests {
     @Test
     @DisplayName ("Test para comprobar el saldo")
     void testSaldoCuenta() {
-        Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.5655"));
+        //Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.5655"));
 
         // probamos con assertEquals el saldo
         assertEquals(1000.5655, cuenta.getSaldo().doubleValue());
@@ -67,7 +95,7 @@ public class CuentaTests {
     @Test
     void testDebitoCuenta() {
 
-        Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.5655"));
+        //Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.5655"));
         cuenta.debito(new BigDecimal(100));
         assertNotNull(cuenta.getSaldo());
         assertEquals(900, cuenta.getSaldo().intValue());
@@ -77,7 +105,7 @@ public class CuentaTests {
     @Test
     void testCreditoCuenta() {
 
-        Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.5655"));
+        //Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.5655"));
         cuenta.credito(new BigDecimal(100));
         assertNotNull(cuenta.getSaldo());
         assertEquals(1100, cuenta.getSaldo().intValue());
@@ -86,7 +114,7 @@ public class CuentaTests {
 
     @Test
     void testDineroInsuficienteExteptionCuenta() {
-        Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.6566"));
+        //Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.6566"));
 
         // Comprobamos la exception
         Exception exception = assertThrows(dineroInsuficienteExceptions.class, () -> {
@@ -144,4 +172,71 @@ public class CuentaTests {
 
     }
 
+
+    // Ejemplos de condicionales posibles para luego anidar un TEST que solo se ejecuta si cumple la condicion
+    @Test
+    @EnabledOnOs (OS.WINDOWS)
+    void testSoloWindows(){
+    }
+
+    @Test 
+    @EnabledOnOs ({OS.LINUX, OS.MAC})
+    void testSoloLinuxMac(){
+    }
+
+    @Test 
+    @DisabledOnOs (OS.WINDOWS)
+    void tesNoWindows(){
+    }
+
+    @Test 
+    @EnabledOnJre (JRE.JAVA_25)
+    void testSoloJDK8(){
+    }
+
+    //mnetodo para obtener las propiedades del sistema, para comprobarlos antes de lanzar la prueba que se ejecutara con el condicional del sistema.
+    @Test 
+    void imprimirSystemPropierties(){
+        Properties properties=System.getProperties();
+        properties.forEach((k,v)->System.out.println(k + ":" + v));
+
+
+    }
+
+    @Test 
+    @EnabledIfSystemProperty(named="java.class.version", matches="69.0")
+    void testJavaVersion(){
+    }
+
+    @Test 
+    @DisabledIfSystemProperty (named ="os.arch", matches =".*32.*")
+    void testSolo64(){
+    }
+
+    @Test 
+    @EnabledIfSystemProperty (named ="os.arch", matches =".*32.*")
+    void testNO64(){
+    }
+
+    @Test 
+    @EnabledIfSystemProperty (named= "user.name", matches = "dev")
+    void testDev(){
+    }
+
+    @Test 
+    void imprimirVariableAmbiente(){
+        Map<String, String> getenv= System.getenv();
+        getenv.forEach((k,v) -> System.out.println(k + "=" + v));
+    }
+
+    @Test 
+    @EnabledIfEnvironmentVariable (named ="JAVA_HOME", matches = ".*jdk-25.0.2.*")
+    void testJavaHome(){
+    }
+
+
+
+
+
 }
+
