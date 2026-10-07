@@ -14,6 +14,9 @@ import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import JUnit5_study_app.exeptions.dineroInsuficienteExceptions;
 import JUnit5_study_app.models.Banco;
@@ -276,6 +279,29 @@ public class CuentaTests {
         assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0);
         assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
     }
+
+
+
+    // Probaremos ParametrizedTest con diferentes valores
+    @ParameterizedTest(name="numero {index} ejecutando con valor {0} - {argumentsWithNames}")
+    @ValueSource(strings = {"100", "200", "300" , "400", "1000.5655"})
+        void testDebitoCuentaValueSource(String monto) {
+
+            cuenta.debito(new BigDecimal(monto));
+            assertNotNull(cuenta.getSaldo());
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+        }
+
+        // Probaremos ParametrizedTest con diferentes valores
+    @ParameterizedTest(name="numero {index} ejecutando con valor {0} - {argumentsWithNames}")
+    @CsvSource({"1,100", "2,200", "3,300", "4,400", "5,700", "6,1000.5655"})
+        void testDebitoCuentaCsvSource(String index, String monto) {
+
+            System.out.println(index + " -> " + monto);
+            cuenta.debito(new BigDecimal(monto));
+            assertNotNull(cuenta.getSaldo());
+            assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+        }
 
 
 }
