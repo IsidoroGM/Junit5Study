@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestReporter;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -31,10 +32,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class CuentaTests {
 
@@ -352,6 +355,29 @@ public class CuentaTests {
 
     }
 
+    @Nested 
+    @Tag("timeout")
+    class ejemploTimeOutTest{
+        @Test
+        @Timeout(1)
+        void pruebaTimeout() throws InterruptedException {
+            TimeUnit.SECONDS.sleep(1);
+        }        
+    }
+
+    @Test
+        @Timeout(value=1000, unit= TimeUnit.MILLISECONDS)
+        void pruebaTimeout2() throws InterruptedException {
+            TimeUnit.MILLISECONDS.sleep(900);
+        }
+
+    @Test 
+    void pruebaTimeoutAssertions(){
+        assertTimeout(Duration.ofSeconds(5), ()->{
+            TimeUnit.MILLISECONDS.sleep(4000);
+        });
+    }
+    
 
 }
 
